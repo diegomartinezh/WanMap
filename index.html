@@ -33,38 +33,38 @@
 
 			// Iconos de pointers
 			const UniIcon = new Icon({
-				iconUrl: 'UDIT_logo.png',
+				iconUrl: 'images/UDIT_logo.png',
 				iconSize:     [30, 30], // size of the icon
 				});
 
 			const WaterIcon = new Icon({
-				iconUrl: 'water.png',
+				iconUrl: 'images/water.png',
 				iconSize:     [40, 40], // size of the icon
 				});
 
 			const BinIcon = new Icon({
-				iconUrl: 'bin.png',
+				iconUrl: 'images/bin.png',
 				iconSize:     [20, 20], // size of the icon
 				});
 
 			const DogIcon = new Icon({
-				iconUrl: 'dog.png',
+				iconUrl: 'images/dog.png',
 				iconSize:     [40, 40], // size of the icon
 				});
 
 			// Cogemos el json a partir de la api (control + click izq para descargar y leer en local)
 			let aresponse = await fetch('https://datos.madrid.es/dataset/300094-0-areas-caninas/resource/300094-0-areas-caninas/download/300094-0-areas-caninas.json');
-			//let aresponse = await fetch('300094-0-areas-caninas.json');
+			//let aresponse = await fetch('local_datasets/300094-0-areas-caninas.json');
 			const adata = await aresponse.json();
 
 			// Datos fuentes de mascotas			
 			let fresponse = await fetch('https://datos.madrid.es/dataset/50055-0-fuentes-mascotas/resource/50055-0-fuentes-mascotas/download/50055-0-fuentes-mascotas.json');
-			//let fresponse = await fetch('50055-0-fuentes-mascotas.json');
+			//let fresponse = await fetch('local_datasets/50055-0-fuentes-mascotas.json');
 			const fdata = await fresponse.json();
 
 			// Datos papeleras con bolsas para mascotas
 			const presponse = await fetch('https://datos.madrid.es/dataset/300081-0-papeleras-bolsas-excrementos/resource/300081-1-papeleras-bolsas-excrementos/download/300081-1-papeleras-bolsas-excrementos.json');
-			//const presponse = await fetch('300081-1-papeleras-bolsas-excrementos.json');
+			//const presponse = await fetch('local_datasets/300081-1-papeleras-bolsas-excrementos.json');
 			let pdata = await presponse.json();
 
 			// Marker de Prueba. Si este no aparece, algo ha ido mal
