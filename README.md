@@ -1,5 +1,5 @@
 # Github pages link (To view project from browser):
-https://diegomartinezh.github.io/WanMap/
+## https://diegomartinezh.github.io/WanMap/
 # Group members:
 - Arseniy Lugovoy<br>
 - Diego Martinez<br>
