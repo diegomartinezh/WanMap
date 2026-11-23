@@ -18,7 +18,7 @@
 			///////////////////////////////////////
 
 			// Importe de la biblioteca de código para hacer mapas
-			import {LeafletMap, TileLayer, Marker, Circle, Polygon, Icon} from 'https://cdn.jsdelivr.net/npm/leaflet@2.0.0-beta.2/dist/leaflet.js';
+			import {LeafletMap, TileLayer, Marker, Circle, Polygon, Icon} from "https://cdn.jsdelivr.net/npm/leaflet@2.0.0-beta.2/dist/leaflet.js";
 
 			// Creación de Objeto mapa
 			const map = new LeafletMap('map').setView([40.440486, -3.627189], 100);
@@ -30,7 +30,6 @@
 			}).addTo(map);
 
 			// Aqui se van añadiendo los marcadores que vamos creando
-			let markers = [];
 
 			// Iconos de pointers
 			const UniIcon = new Icon({
@@ -40,30 +39,138 @@
 
 			const WaterIcon = new Icon({
 				iconUrl: 'water.png',
-				iconSize:     [30, 30], // size of the icon
+				iconSize:     [40, 40], // size of the icon
+				});
+
+			const BinIcon = new Icon({
+				iconUrl: 'bin.png',
+				iconSize:     [20, 20], // size of the icon
+				});
+
+			const DogIcon = new Icon({
+				iconUrl: 'dog.png',
+				iconSize:     [40, 40], // size of the icon
 				});
 
 			// Cogemos el json a partir de la api (control + click izq para descargar y leer en local)
-			// Datos ejemplo desfibriladores
-			//let dresponse = await fetch('https://datos.madrid.es/dataset/286717-0-desfibriladores-externos-fuera-del-ambito-sanitario/resource/286717-1-desfibriladores-externos-fuera-del-ambito-sanitario/download/286717-1-desfibriladores-externos-fuera-del-ambito-sanitario.json');
-			//const ddata = await dresponse.json();
+			let aresponse = await fetch('https://datos.madrid.es/dataset/300094-0-areas-caninas/resource/300094-0-areas-caninas/download/300094-0-areas-caninas.json');
+			//let aresponse = await fetch('300094-0-areas-caninas.json');
+			const adata = await aresponse.json();
+
 			// Datos fuentes de mascotas			
 			let fresponse = await fetch('https://datos.madrid.es/dataset/50055-0-fuentes-mascotas/resource/50055-0-fuentes-mascotas/download/50055-0-fuentes-mascotas.json');
+			//let fresponse = await fetch('50055-0-fuentes-mascotas.json');
 			const fdata = await fresponse.json();
-			// Datos papeleras con bolsas para mascotas
-			//const presponse = await fetch('https://datos.madrid.es/dataset/300081-0-papeleras-bolsas-excrementos/resource/300081-1-papeleras-bolsas-excrementos/download/300081-1-papeleras-bolsas-excrementos.json');
-			//let pdata = await presponse.json();
 
-			// Aqui creamos los marcadores a partir de los datos
-			for (let i = 0; i < fdata.length; i++)
-			{
-				markers.push(new Marker([fdata[i].LATITUD, fdata[i].LONGITUD], {icon: WaterIcon}).addTo(map));
-				markers[i].bindPopup("<b>"+ fdata[i].NOM_VIA+ "</b>" + "<br>\nESTADO: " + fdata[i].ESTADO + "<br>\nUSO: " + fdata[i].USO);
-			}
+			// Datos papeleras con bolsas para mascotas
+			const presponse = await fetch('https://datos.madrid.es/dataset/300081-0-papeleras-bolsas-excrementos/resource/300081-1-papeleras-bolsas-excrementos/download/300081-1-papeleras-bolsas-excrementos.json');
+			//const presponse = await fetch('300081-1-papeleras-bolsas-excrementos.json');
+			let pdata = await presponse.json();
 
 			// Marker de Prueba. Si este no aparece, algo ha ido mal
+			// const marker = new Marker([40.440486, -3.627189], {icon: UniIcon}).addTo(map);
+			// marker.bindPopup("<b>Hola</b><br>Esta es nuestra universidad").openPopup();
+
+			// Esto es IA, para convertir de coordenadas a Latitud y Longitud
+			/////////////////////////////////////////////////////////
+			function utmToLatLon(easting, northing, zone = 30, isNorthernHemisphere = true) {
+				const a = 6378137.0; // WGS84 semi-major axis (meters)
+				const f = 1 / 298.257223563; // WGS84 flattening
+				const k0 = 0.9996; // UTM scale factor
+
+				const e2 = f * (2 - f);
+				const ep2 = e2 / (1 - e2);
+
+				const x = easting - 500000.0;
+				const y = isNorthernHemisphere ? northing : northing - 10000000.0;
+
+				const lonOrigin = (zone - 1) * 6 - 180 + 3; // Central meridian in degrees
+				const lonOriginRad = (lonOrigin * Math.PI) / 180;
+
+				const M = y / k0;
+				const mu =
+					M /
+					(a *
+					(1 -
+						e2 / 4 -
+						(3 * e2 * e2) / 64 -
+						(5 * e2 * e2 * e2) / 256));
+
+				const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
+
+				const phi1Rad =
+					mu +
+					((3 * e1) / 2 - (27 * Math.pow(e1, 3)) / 32) * Math.sin(2 * mu) +
+					((21 * e1 * e1) / 16 - (55 * Math.pow(e1, 4)) / 32) * Math.sin(4 * mu) +
+					((151 * Math.pow(e1, 3)) / 96) * Math.sin(6 * mu) +
+					((1097 * Math.pow(e1, 4)) / 512) * Math.sin(8 * mu);
+
+				const sinPhi1 = Math.sin(phi1Rad);
+				const cosPhi1 = Math.cos(phi1Rad);
+				const tanPhi1 = Math.tan(phi1Rad);
+
+				const N1 = a / Math.sqrt(1 - e2 * sinPhi1 * sinPhi1);
+				const T1 = tanPhi1 * tanPhi1;
+				const C1 = ep2 * cosPhi1 * cosPhi1;
+				const R1 = (a * (1 - e2)) / Math.pow(1 - e2 * sinPhi1 * sinPhi1, 1.5);
+				const D = x / (N1 * k0);
+
+				const latRad =
+					phi1Rad -
+					((N1 * tanPhi1) / R1) *
+					((D * D) / 2 -
+						((5 + 3 * T1 + 10 * C1 - 4 * C1 * C1 - 9 * ep2) * Math.pow(D, 4)) / 24 +
+						((61 + 90 * T1 + 298 * C1 + 45 * T1 * T1 - 252 * ep2 - 3 * C1 * C1) *
+						Math.pow(D, 6)) /
+						720);
+
+				const lonRad =
+					lonOriginRad +
+					(D -
+					((1 + 2 * T1 + C1) * Math.pow(D, 3)) / 6 +
+					((5 - 2 * C1 + 28 * T1 - 3 * C1 * C1 + 8 * ep2 + 24 * T1 * T1) *
+						Math.pow(D, 5)) /
+						120) /
+					cosPhi1;
+
+				return {
+					lat: (latRad * 180) / Math.PI,
+					lon: (lonRad * 180) / Math.PI,
+				};
+				}
+			////////////////////////////////////////////////////////
+
 			const marker = new Marker([40.440486, -3.627189], {icon: UniIcon}).addTo(map);
-			marker.bindPopup("<b>Hola</b>Esta es nuestra universidad").openPopup();
+			marker.bindPopup("<b>Hola desde UDIT! (edificio de tecnologia)</b><br>Esta es nuestra universidad").openPopup();
+
+
+			let pmarkers = [];
+			for (let i = 0; i < pdata.length; i++)
+			{
+				pmarkers.push(new Marker([pdata[i].LATITUD, pdata[i].LONGITUD], {icon: BinIcon}).addTo(map));
+				pmarkers[i].bindPopup(pdata[i].NOM_VIA);
+			}
+
+			let amarkers = [];
+			let aareas = [];
+			for (let i = 0; i < adata.length; i++)
+			{
+				const coords = utmToLatLon(parseFloat(adata[i].COORD_GIS_X), parseFloat(adata[i].COORD_GIS_Y), 30, true);
+				amarkers.push(new Marker([coords["lat"], coords["lon"]], {icon: DogIcon}).addTo(map));
+				amarkers[i].bindPopup(adata[i].BARRIO);
+
+				
+				const circle = new Circle([coords["lat"], coords["lon"]], {color: 'red', fillColor: '#f03', fillOpacity: 0.5, radius: 100}).addTo(map);
+			}
+
+			let fmarkers = [];
+			for (let i = 0; i < fdata.length; i++)
+			{
+				fmarkers.push(new Marker([fdata[i].LATITUD, fdata[i].LONGITUD], {icon: WaterIcon}).addTo(map));
+				fmarkers[i].bindPopup("<b>"+ fdata[i].NOM_VIA+ "</b>" + "<br>\nESTADO: " + fdata[i].ESTADO + "<br>\nUSO: " + fdata[i].USO);
+			}
+
+			
 		</script>
 	</body>
 </html>
