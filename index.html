@@ -53,18 +53,21 @@
 				});
 
 			// Cogemos el json a partir de la api (control + click izq para descargar y leer en local)
-			let aresponse = await fetch('https://datos.madrid.es/dataset/300094-0-areas-caninas/resource/300094-0-areas-caninas/download/300094-0-areas-caninas.json');
-			//let aresponse = await fetch('local_datasets/300094-0-areas-caninas.json');
+			// Para la entrega del 26 hacemos que todo cargue local para que no caiga la api durante la presentacion
+
+			// Datos areas caninas
+			//let aresponse = await fetch('https://datos.madrid.es/dataset/300094-0-areas-caninas/resource/300094-0-areas-caninas/download/300094-0-areas-caninas.json');
+			let aresponse = await fetch('local_datasets/300094-0-areas-caninas.json');
 			const adata = await aresponse.json();
 
 			// Datos fuentes de mascotas			
-			let fresponse = await fetch('https://datos.madrid.es/dataset/50055-0-fuentes-mascotas/resource/50055-0-fuentes-mascotas/download/50055-0-fuentes-mascotas.json');
-			//let fresponse = await fetch('local_datasets/50055-0-fuentes-mascotas.json');
+			//let fresponse = await fetch('https://datos.madrid.es/dataset/50055-0-fuentes-mascotas/resource/50055-0-fuentes-mascotas/download/50055-0-fuentes-mascotas.json');
+			let fresponse = await fetch('local_datasets/50055-0-fuentes-mascotas.json');
 			const fdata = await fresponse.json();
 
 			// Datos papeleras con bolsas para mascotas
-			const presponse = await fetch('https://datos.madrid.es/dataset/300081-0-papeleras-bolsas-excrementos/resource/300081-1-papeleras-bolsas-excrementos/download/300081-1-papeleras-bolsas-excrementos.json');
-			//const presponse = await fetch('local_datasets/300081-1-papeleras-bolsas-excrementos.json');
+			//const presponse = await fetch('https://datos.madrid.es/dataset/300081-0-papeleras-bolsas-excrementos/resource/300081-1-papeleras-bolsas-excrementos/download/300081-1-papeleras-bolsas-excrementos.json');
+			const presponse = await fetch('local_datasets/300081-1-papeleras-bolsas-excrementos.json');
 			let pdata = await presponse.json();
 
 			// Marker de Prueba. Si este no aparece, algo ha ido mal
